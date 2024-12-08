@@ -1,0 +1,37 @@
+services:
+  envoy:
+    # image: envoyproxy/envoy:v1.32-latest
+    build:
+      context: envoy
+    volumes:
+      - ./envoy/envoy.yaml:/config/envoy.yaml
+    networks:
+      - envoynet
+    ports:
+      - "80:9000"
+      - "19000:19000"
+      - "19010:19010"
+    environment:
+      - DEBUG_LEVEL=info
+      - USE_STATSD=true
+      - SERVICE_NAME=app
+      - SERVICE_PORT=80
+      - LOG_PROCESSOR=fluentbit
+  app:
+    image: kennethreitz/httpbin:latest
+    networks:
+      - envoynet
+    ports:
+      - "8080:80"
+  fluentbit:
+    image: fluent/fluent-bit:2.0.6
+    networks:
+      - envoynet
+    ports:
+      - "8125:8125/udp"
+    volumes:
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+networks:
+  envoynet:
+    driver: bridge
+    name: test
