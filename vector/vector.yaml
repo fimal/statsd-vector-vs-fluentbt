@@ -1,0 +1,53 @@
+sources:
+  vector_metrics:
+    type: "internal_metrics"
+    scrape_interval_secs: 10
+  statsd:
+    type: "statsd"
+    address: "0.0.0.0:8125"
+    mode: "udp"
+    sanitize: false
+transforms:
+  enforcer_metrics_to_logs:
+    type: metric_to_log
+    inputs: [statsd]
+  license_metering:
+    type: remap
+    drop_on_abort: true
+    inputs: [enforcer_metrics_to_logs]
+    source: |-
+      # only keep downstream_rq_total metrics
+      if !contains(string!(.name), "downstream_rq_total") {
+        abort;
+      }
+      # set logtype
+      .logtype = "Metric";
+      .metric = .name;
+      del(.name);
+      .value = .counter.value;
+      del(.counter)
+      .fluentbit_ts = .timestamp;
+      del(.timestamp)
+      del(.kind)
+sinks:
+  out:
+    type: "blackhole"
+    inputs: ["license_metering"]
+  # print:
+  #   type: "console"
+  #   inputs: ["license_metering"]
+  #   encoding:
+  #     codec: "json"
+  #     json:
+  #       pretty: true
+  promethues_metrics:
+    type: "prometheus_exporter"
+    inputs: ["vector_metrics"]
+    address: "0.0.0.0:2025"
+    flush_period_secs: 60
+api:
+  enabled: true
+  address: "127.0.0.1:8686"
+  playground: true
+# Set global options
+data_dir: "/var/lib/vector"

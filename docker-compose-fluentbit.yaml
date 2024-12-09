@@ -3,6 +3,11 @@ services:
     # image: envoyproxy/envoy:v1.32-latest
     build:
       context: envoy
+    depends_on:
+      fluentbit:
+        condition: service_started
+      app:
+        condition: service_started
     volumes:
       - ./envoy/envoy.yaml:/config/envoy.yaml
     networks:
@@ -22,7 +27,7 @@ services:
     networks:
       - envoynet
     ports:
-      - "8080:80"
+      - "9090:80"
   fluentbit:
     image: fluent/fluent-bit:2.0.6
     networks:
@@ -31,6 +36,11 @@ services:
       - "8125:8125/udp"
     volumes:
       - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 200M
 networks:
   envoynet:
     driver: bridge

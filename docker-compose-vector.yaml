@@ -1,0 +1,47 @@
+services:
+  envoy:
+    # image: envoyproxy/envoy:v1.32-latest
+    build:
+      context: envoy
+    depends_on:
+      vector:
+        condition: service_started
+      app:
+        condition: service_started
+    volumes:
+      - ./envoy/envoy.yaml:/config/envoy.yaml
+    networks:
+      - envoynet
+    ports:
+      - "80:9000"
+      - "19000:19000"
+      - "19010:19010"
+    environment:
+      - DEBUG_LEVEL=info
+      - USE_STATSD=true
+      - SERVICE_NAME=app
+      - SERVICE_PORT=80
+      - LOG_PROCESSOR=vector
+  app:
+    image: kennethreitz/httpbin:latest
+    networks:
+      - envoynet
+    ports:
+      - "9090:80"
+  vector:
+    image: timberio/vector:0.43.0-debian
+    networks:
+      - envoynet
+    ports:
+      - "8125:8125/udp"
+    volumes:
+      - ./vector/vector.yaml:/etc/vector/vector.yaml
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 200M
+networks:
+  envoynet:
+    driver: bridge
+    name: test
