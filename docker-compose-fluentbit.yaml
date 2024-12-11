@@ -8,6 +8,7 @@ services:
         condition: service_started
       app:
         condition: service_started
+    container_name: envoy
     volumes:
       - ./envoy/envoy.yaml:/config/envoy.yaml
     networks:
@@ -24,12 +25,14 @@ services:
       - LOG_PROCESSOR=fluentbit
   app:
     image: kennethreitz/httpbin:latest
+    container_name: app
     networks:
       - envoynet
     ports:
       - "9090:80"
   fluentbit:
     image: fluent/fluent-bit:2.0.6
+    container_name: fluentbit
     networks:
       - envoynet
     ports:
@@ -41,6 +44,19 @@ services:
         limits:
           cpus: "1.0"
           memory: 200M
+  k6:
+    image: grafana/k6
+    entrypoint: /bin/sh
+    container_name: k6
+    networks:
+      - envoynet 
+    #command: run -e RATE=500 -e DURATION=10s /tests/http_case_01.js -e MY_HOST='envoy' -e USER_IP='100.100.100.100' -e CASE=vector -e DOMAIN=kwaf-demo.test -e CUSTOM_USER_IP_HEADER=XFF -e EXPECTED_SIZE=204800 | tail -3 | head -1 |jq -r '.|([(.metrics.http_req_duration.values| (.avg),(."p(90)"),(."p(95)"),(.max)),.metrics.http_req_failed.values.rate])| @csv'
+    command: /tests/start_k6.sh
+    volumes:
+      - ./k6:/tests
+    depends_on:
+      envoy:
+        condition: service_started
 networks:
   envoynet:
     driver: bridge

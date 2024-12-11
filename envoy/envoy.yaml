@@ -14,16 +14,6 @@ stats_sinks:
         port_value: 8125
     prefix: envoy.statsd.metrics
 stats_flush_interval: 3s
-stats_config:
-  stats_tags:
-  - tag_name: classifier
-    regex: "^\\w+?(?=\\.).*?\\.(classifier\\.(.+?)\\.)(\\w|\\.)+?$"
-  - tag_name: code
-    regex: ".*enforcer\\.rater_response_status(_([^\\.]+))?"
-  - tag_name: protection
-    regex: "^\\w+?(?=\\.).*?\\.(protection\\.(.+?)\\.)\\w+?$"
-  - tag_name: type
-    regex: ".*enforcer\\.downstream_rq(_([^\\.]+))?"
 static_resources:
   listeners:
     - name: listener_0

@@ -11,31 +11,31 @@ transforms:
   enforcer_metrics_to_logs:
     type: metric_to_log
     inputs: [statsd]
-  license_metering:
-    type: remap
-    drop_on_abort: true
-    inputs: [enforcer_metrics_to_logs]
-    source: |-
-      # only keep downstream_rq_total metrics
-      if !contains(string!(.name), "downstream_rq_total") {
-        abort;
-      }
-      # set logtype
-      .logtype = "Metric";
-      .metric = .name;
-      del(.name);
-      .value = .counter.value;
-      del(.counter)
-      .fluentbit_ts = .timestamp;
-      del(.timestamp)
-      del(.kind)
+  # license_metering:
+  #   type: remap
+  #   drop_on_abort: true
+  #   inputs: [enforcer_metrics_to_logs]
+  #   source: |-
+  #     # only keep downstream_rq_total metrics
+  #     if !contains(string!(.name), "downstream_rq_total") {
+  #       abort;
+  #     }
+  #     # set logtype
+  #     .logtype = "Metric";
+  #     .metric = .name;
+  #     del(.name);
+  #     .value = .counter.value;
+  #     del(.counter)
+  #     .fluentbit_ts = .timestamp;
+  #     del(.timestamp)
+  #     del(.kind)
 sinks:
   out:
     type: "blackhole"
-    inputs: ["license_metering"]
+    inputs: ["*"]
   # print:
   #   type: "console"
-  #   inputs: ["license_metering"]
+  #   inputs: ["*"]
   #   encoding:
   #     codec: "json"
   #     json:
