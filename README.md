@@ -23,7 +23,10 @@ docker-compose -f docker-compose-vector.yaml up -d && ./monitor.sh vector
 docker-compose -f docker-compose-vector.yaml down && ./init.sh
 ```
 
+
+# NOTES - NOT REQUIRED
 ## Monitoring containers with cadvisor
+- just in case GUI is prefarable 
 - cadvisor expose port 8080 to access GUI
 
 ```bash
