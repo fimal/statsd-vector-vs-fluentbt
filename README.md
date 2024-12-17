@@ -5,7 +5,7 @@
 ## Getting Started
 - Create sandbox with docker-compose
 - Test runs 60 seconds and stops, all results will be redirected to file results_{fluentbit|vector}_{time}.log
-- in case required to change duration of this test, please change [start_k6.sh](#k6/start_k6.sh) - {DURATION} variable 
+- in case required to change duration of this test, please change [start_k6.sh](k6/start_k6.sh) - {DURATION} variable 
 
 ## Fluent-BIT tests
 - Start test with fluentbit
