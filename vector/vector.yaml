@@ -8,6 +8,14 @@ sources:
     mode: "udp"
     sanitize: false
 transforms:
+  # filter *rq_total to remove first all metrics which are not required
+  # enforcer_filter:
+  #   type: filter
+  #   inputs: [statsd]
+  #   condition: contains(string!(.name),"downstream_rq_total") == true
+  #   condition: #contains(string!(.name),"downstream_rq_total") == true
+  #     type: vrl
+  #     source: match!(.name, r'.*.downstream_rq_total')
   enforcer_metrics_to_logs:
     type: metric_to_log
     inputs: [statsd]
@@ -20,7 +28,7 @@ transforms:
   #     if !contains(string!(.name), "downstream_rq_total") {
   #       abort;
   #     }
-  #     # set logtype
+  #     #set logtype
   #     .logtype = "Metric";
   #     .metric = .name;
   #     del(.name);
