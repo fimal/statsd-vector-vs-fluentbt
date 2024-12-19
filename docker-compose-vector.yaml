@@ -50,7 +50,6 @@ services:
     container_name: k6
     networks:
       - envoynet 
-    #command: run -e RATE=500 -e DURATION=10s /tests/http_case_01.js -e MY_HOST='envoy' -e USER_IP='100.100.100.100' -e CASE=vector -e DOMAIN=kwaf-demo.test -e CUSTOM_USER_IP_HEADER=XFF -e EXPECTED_SIZE=204800 | tail -3 | head -1 |jq -r '.|([(.metrics.http_req_duration.values| (.avg),(."p(90)"),(."p(95)"),(.max)),.metrics.http_req_failed.values.rate])| @csv'
     command: /tests/start_k6.sh
     volumes:
       - ./k6:/tests

@@ -51,7 +51,7 @@ static_resources:
         - name: envoy.http_connection_manager
           typed_config:
             "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-            stat_prefix: waas_metrics
+            stat_prefix: envoy_metrics
             route_config:
               name: local_route
               virtual_hosts:
@@ -62,11 +62,11 @@ static_resources:
                 - match:
                     prefix: "/stats/prometheus"
                   route:
-                    cluster: waas_metrics
+                    cluster: envoy_metrics
                 - match:
                     prefix: "/metrics"
                   route:
-                    cluster: waas_metrics
+                    cluster: envoy_metrics
                     regex_rewrite:
                       pattern:
                         regex: metrics
@@ -79,11 +79,11 @@ static_resources:
                 "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
             server_header_transformation: PASS_THROUGH
   clusters:
-    - name: waas_metrics
+    - name: envoy_metrics
       type: STATIC
       connect_timeout: 1s
       load_assignment:
-        cluster_name: waas_metrics
+        cluster_name: envoy_metrics
         endpoints:
         - lb_endpoints:
           - endpoint:

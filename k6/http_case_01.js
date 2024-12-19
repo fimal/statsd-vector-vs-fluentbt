@@ -1,7 +1,4 @@
-//k6 run -e RATE=500 -e DURATION=30s  k6/http_case_01.js -e MY_HOST='127.0.0.1' -e USER_IP='100.100.100.100' -e CASE=vector -e DOMAIN=kwaf-demo.test | tail -3 | head -1 |jq -r '.|([(.metrics.http_req_duration.values| (.avg),(."p(90)"),(."p(95)"),(.max)),.metrics.http_req_failed.values.rate])| @csv'
 import http from "k6/http";
-//import { check } from "k6";
-//import { Rate } from "k6/metrics";
 var url = `http://${__ENV.MY_HOST}`;
 var params = {
     headers: {
