@@ -43,10 +43,10 @@ transforms:
 sinks:
   out:
     type: "blackhole"
-    inputs: ["metrics_input"]
+    inputs: ["license_metering"]
   # print:
   #   type: "console"
-  #   inputs: ["metrics_input"]
+  #   inputs: ["license_metering"]
   #   encoding:
   #     codec: "json"
   #     json:
