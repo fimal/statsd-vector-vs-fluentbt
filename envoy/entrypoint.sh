@@ -12,4 +12,4 @@ export LOG_PROCESSOR_IP
 sed -e "s/\${SERVICE_NAME}/${SERVICE_NAME}/" -e "s/\${SERVICE_PORT}/${SERVICE_PORT}/" -e "s/\${LOG_PROCESSOR_IP}/${LOG_PROCESSOR_IP}/" \
     /config/envoy.yaml > /etc/envoy.yaml
 
-/usr/local/bin/envoy -c /etc/envoy.yaml -l ${DEBUG_LEVEL}
+/usr/local/bin/envoy -c /etc/envoy.yaml -l ${DEBUG_LEVEL} --service-cluster 'statsd-envoy' --service-node 'statsd-envoy'
