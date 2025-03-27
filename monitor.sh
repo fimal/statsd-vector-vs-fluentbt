@@ -1,4 +1,6 @@
 #!/bin/bash
+# kubectl top nodes --no-headers | awk '{print "{\"name\": \"" $1 "\", \"cpu\": \"" $2 "\", \"memory\": \"" $3 "\"}"}' | jq -s
+# kubectl top pods --no-headers --all-namespaces | awk '{print "{\"namespace\": \"" $1 "\", \"name\": \"" $2 "\", \"cpu\": \"" $3 "\", \"memory\": \"" $4 "\"}"}' | jq -s
 cd "$(dirname "$0")"
 
 
